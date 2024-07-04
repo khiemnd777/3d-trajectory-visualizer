@@ -93,7 +93,7 @@ function createTextLabel(scene, text, position) {
   const div = document.createElement('div');
   div.className = 'label';
   div.textContent = text;
-  div.style.color = 'yellow';
+  div.style.color = 'black';
   div.style.fontSize = '26px';
   div.style.fontWeight = 'bold';
 

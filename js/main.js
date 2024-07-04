@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('Line created and added to scene:', line);
 
   // Fit the camera to the line
-  fitCameraToObject(camera, line);
+  fitCameraToObject(camera, line, 1.75);
   console.log('Camera fitted to object');
 
   const marker = createMarker(scene);
