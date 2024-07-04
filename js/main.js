@@ -1,11 +1,12 @@
 // js/main.js
 
+import * as THREE from 'three';
 import { coordinates } from './calculations.js';
 import { initThreeJS, createLine, createMarker, createTextLabel, createAxes, createGroundPlane, fitCameraToObject } from './threejs-setup.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const { scene, camera, renderer, controls } = initThreeJS();
-  console.log('Scene, camera, renderer, and controls initialized');
+  const { scene, camera, renderer, controls, labelRenderer } = initThreeJS();
+  console.log('Scene, camera, renderer, controls, and labelRenderer initialized');
 
   const line = createLine(coordinates);
   scene.add(line);
@@ -27,15 +28,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('Ground plane created and added to scene');
 
   // Create text labels for axes
-  await createTextLabel(scene, 'East', new THREE.Vector3(100, 0, 0));  // East is X
-  await createTextLabel(scene, 'TVD', new THREE.Vector3(0, -100, 0));  // TVD is Y (inverted)
-  await createTextLabel(scene, 'North', new THREE.Vector3(0, 0, 100));  // North is Z
+  createTextLabel(scene, 'West', new THREE.Vector3(-100, 10, 0));  // West is X
+  createTextLabel(scene, 'East', new THREE.Vector3(100, 10, 0));  // East is X
+  // await createTextLabel(scene, 'TVD', new THREE.Vector3(0, -100, 0));  // TVD is Y (inverted)
+  createTextLabel(scene, 'North', new THREE.Vector3(0, 10, -100));  // North is Z
+  createTextLabel(scene, 'South', new THREE.Vector3(0, 10, 100));  // South is Z
+
   console.log('Text labels created and added to scene');
 
   function animate() {
     requestAnimationFrame(animate);
     controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
     renderer.render(scene, camera);
+    labelRenderer.render(scene, camera);
   }
   animate();
   console.log('Rendering loop started');
