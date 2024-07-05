@@ -32,13 +32,26 @@ function initThreeJS() {
   controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
   controls.dampingFactor = 0.25;
   controls.screenSpacePanning = false;
+  controls.enablePan = false; // Disable panning
   controls.minDistance = 10;
   controls.maxDistance = 5000;
   controls.maxPolarAngle = Math.PI / 2;
 
+  // Set pivot point
+  const pivot = new THREE.Vector3(0, 50, 0);
+  controls.target.copy(pivot);
+  controls.update();
+
   // Add ambient light
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
   scene.add(ambientLight);
+
+  // Add a small marker at the pivot point for visualization
+  const pivotMarkerGeometry = new THREE.SphereGeometry(1, 32, 32);
+  const pivotMarkerMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  const pivotMarker = new THREE.Mesh(pivotMarkerGeometry, pivotMarkerMaterial);
+  pivotMarker.position.copy(pivot);
+  scene.add(pivotMarker);
 
   camera.position.set(0, 100, 200); // Set initial camera position
   controls.update(); // Required if controls.enableDamping or controls.autoRotate
@@ -49,9 +62,11 @@ function initThreeJS() {
     renderer,
     controls,
     labelRenderer,
+    pivot,
+    pivotMarker
   });
 
-  return { scene, camera, renderer, controls, labelRenderer };
+  return { scene, camera, renderer, controls, labelRenderer, pivot, pivotMarker };
 }
 
 function createLine(coordinates) {
