@@ -104,12 +104,12 @@ function createMarker(scene) {
   return marker;
 }
 
-function createTextLabel(scene, text, position) {
+function createTextLabel(scene, text, position, color = 'yellow', fontSize = '20px') {
   const div = document.createElement('div');
   div.className = 'label';
   div.textContent = text;
-  div.style.color = 'black';
-  div.style.fontSize = '26px';
+  div.style.color = color;
+  div.style.fontSize = fontSize;
   div.style.fontWeight = 'bold';
 
   const label = new CSS2DObject(div);
@@ -120,23 +120,107 @@ function createTextLabel(scene, text, position) {
   return label;
 }
 
-function createAxes(scene) {
-  const axesMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+function createCompass2() {
+  const compassScene = new THREE.Scene();
+
+  const compassCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 5000);
+  compassCamera.position.set(0, 200, 200);
+  compassCamera.lookAt(0, 0, 0);
+  compassScene.add(compassCamera);
+
+  const compassRenderer = new THREE.WebGLRenderer({ antialias: true });
+  compassRenderer.setSize(150, 150);
+  compassRenderer.domElement.style.position = 'absolute';
+  compassRenderer.domElement.style.top = '10px';
+  compassRenderer.domElement.style.left = '10px';
+  document.body.appendChild(compassRenderer.domElement);
+
+  const compassLabelRenderer = new CSS2DRenderer();
+  compassLabelRenderer.setSize(150, 150);
+  compassLabelRenderer.domElement.style.position = 'absolute';
+  compassLabelRenderer.domElement.style.top = '10px';
+  compassLabelRenderer.domElement.style.left = '10px';
+  document.body.appendChild(compassLabelRenderer.domElement);
+
+  const axesMaterial = new THREE.LineBasicMaterial({ color: 0xFFFFFF });
   const axesGeometry = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(0, 10, 0),
     new THREE.Vector3(-100, 10, 0), // X axis (West)
     new THREE.Vector3(0, 10, 0),
     new THREE.Vector3(100, 10, 0), // -X axis (East)
-    // new THREE.Vector3(0, 0, 0),
-    // new THREE.Vector3(0, -100, 0), // Y axis (TVD, inverted)
     new THREE.Vector3(0, 10, 0),
     new THREE.Vector3(0, 10, -100), // Z axis (North)
     new THREE.Vector3(0, 10, 0),
     new THREE.Vector3(0, 10, 100), // -Z axis (South)
   ]);
   const axes = new THREE.LineSegments(axesGeometry, axesMaterial);
-  scene.add(axes);
-  console.log('Axes created and added to scene:', axes);
+  compassScene.add(axes);
+  console.log('Compass created and added to scene:', axes);
+
+  // Create text labels for axes
+  createTextLabel(compassScene, 'W', new THREE.Vector3(-100, 10, 0), '20px', 'white');  // West is X
+  createTextLabel(compassScene, 'E', new THREE.Vector3(100, 10, 0), '20px', 'white');  // East is X
+  createTextLabel(compassScene, 'N', new THREE.Vector3(0, 10, -100), '20px', 'white');  // North is Z
+  createTextLabel(compassScene, 'S', new THREE.Vector3(0, 10, 100), '20px', 'white');  // South is Z
+
+  return { compassScene, compassCamera, compassRenderer, compassLabelRenderer };
+}
+
+function createCompass() {
+  const compassScene = new THREE.Scene();
+
+  const compassSize = 150;
+  const aspect = 1;
+  const frustumSize = 500;
+  const compassCamera = new THREE.OrthographicCamera(
+    frustumSize / -2,
+    frustumSize / 2,
+    frustumSize / 2,
+    frustumSize / -2,
+    0.1,
+    1000
+  );
+  compassCamera.position.set(0, 200, 200);
+  compassCamera.lookAt(0, 0, 0);
+  compassScene.add(compassCamera);
+
+  const compassRenderer = new THREE.WebGLRenderer({ antialias: true });
+  compassRenderer.setSize(compassSize, compassSize);
+  compassRenderer.domElement.style.position = 'absolute';
+  compassRenderer.domElement.style.top = '10px';
+  compassRenderer.domElement.style.left = '10px';
+  document.body.appendChild(compassRenderer.domElement);
+
+  const compassLabelRenderer = new CSS2DRenderer();
+  compassLabelRenderer.setSize(compassSize, compassSize);
+  compassLabelRenderer.domElement.style.position = 'absolute';
+  compassLabelRenderer.domElement.style.top = '10px';
+  compassLabelRenderer.domElement.style.left = '10px';
+  compassLabelRenderer.domElement.style.pointerEvents = 'none'; // Ensure it doesn't interfere with controls
+  document.body.appendChild(compassLabelRenderer.domElement);
+
+  const axesMaterial = new THREE.LineBasicMaterial({ color: 0xffffff }); // Change line color to white
+  const axesGeometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, 10, 0),
+    new THREE.Vector3(-100, 10, 0), // X axis (West)
+    new THREE.Vector3(0, 10, 0),
+    new THREE.Vector3(100, 10, 0), // -X axis (East)
+    new THREE.Vector3(0, 10, 0),
+    new THREE.Vector3(0, 10, -100), // Z axis (North)
+    new THREE.Vector3(0, 10, 0),
+    new THREE.Vector3(0, 10, 100), // -Z axis (South)
+  ]);
+  const axes = new THREE.LineSegments(axesGeometry, axesMaterial);
+  compassScene.add(axes);
+  console.log('Compass created and added to scene:', axes);
+
+  // Create text labels for axes
+  createTextLabel(compassScene, 'W', new THREE.Vector3(-100, 10, 0), 'white', '14px');  // West is X
+  createTextLabel(compassScene, 'E', new THREE.Vector3(100, 10, 0), 'white', '14px');  // East is X
+  createTextLabel(compassScene, 'N', new THREE.Vector3(0, 10, -100), 'white', '14px');  // North is Z
+  createTextLabel(compassScene, 'S', new THREE.Vector3(0, 10, 100), 'white', '14px');  // South is Z
+
+  return { compassScene, compassCamera, compassRenderer, compassLabelRenderer };
 }
 
 function createGroundPlane(scene) {
@@ -193,7 +277,7 @@ export {
   createLine,
   createMarker,
   createTextLabel,
-  createAxes,
+  createCompass,
   createGroundPlane,
   fitCameraToObject,
 };
