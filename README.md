@@ -15,11 +15,21 @@ This project demonstrates a 3D visualization of wellbore trajectories using Thre
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/threejs-wellbore-visualization.git
-   cd threejs-wellbore-visualization
+   git clone https://github.com/khiemnd777/3d-trajectory-visualizer.git
    ```
+2. To install dependencies:
 
-2. Open `index.html` in a web browser to view the visualization.
+   ```bash
+   bun install
+   ```
+3. To run:
+
+   ```bash
+   bun run server.ts
+   ```
+This project was created using `bun init` in bun v1.1.18. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+
+4. Open `http://localhost:3000` in a web browser to view the visualization.
 
 ## Usage
 
@@ -57,21 +67,3 @@ This project is licensed under the BSD 2-Clause License. See the [LICENSE](LICEN
 ## Acknowledgments
 
 - Three.js documentation and examples for providing comprehensive resources and inspiration.
-
----
-
-Feel free to modify the repository URL, description, or any other part of this brief to better fit your project specifics.
-
-To install dependencies:
-
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run server.ts
-```
-
-This project was created using `bun init` in bun v1.1.18. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
