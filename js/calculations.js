@@ -1,7 +1,3 @@
-// js/calculations.js
-
-import { surveyPoints } from './survey-points.js';
-
 function toRadians(degrees) {
   return degrees * (Math.PI / 180);
 }
@@ -14,6 +10,18 @@ function calculateDL(azimuth1, azimuth2, inclination1, inclination2) {
 
 function calculateRF(dl) {
   return dl === 0 ? 1 : 2 * (Math.sin(dl / 2) / dl);
+}
+
+function calculateNorth(incl1, incl2, azm1, azm2, deltaMD, rf, initialNorth) {
+  return initialNorth + (deltaMD / 2) * (Math.sin(incl1) * Math.cos(azm1) + Math.sin(incl2) * Math.cos(azm2)) * rf;
+}
+
+function calculateEast(incl1, incl2, azm1, azm2, deltaMD, rf, initialEast) {
+  return initialEast + (deltaMD / 2) * (Math.sin(incl1) * Math.sin(azm1) + Math.sin(incl2) * Math.sin(azm2)) * rf;
+}
+
+function calculateTVD(incl1, incl2, deltaMD, rf, initialTVD) {
+  return initialTVD + (deltaMD / 2) * (Math.cos(incl1) + Math.cos(incl2)) * rf;
 }
 
 function parseValue(value) {
@@ -51,9 +59,9 @@ function calculateCoordinates(point1, point2, initialCoordinates) {
   const azm1 = toRadians(azimuth1);
   const azm2 = toRadians(azimuth2);
 
-  const north = initialCoordinates.north + (deltaMD / 2) * (Math.sin(incl1) * Math.cos(azm1) + Math.sin(incl2) * Math.cos(azm2)) * rf;
-  const east = initialCoordinates.east + (deltaMD / 2) * (Math.sin(incl1) * Math.sin(azm1) + Math.sin(incl2) * Math.sin(azm2)) * rf;
-  const tvd = initialCoordinates.tvd + (deltaMD / 2) * (Math.cos(incl1) + Math.cos(incl2)) * rf;
+  const north = calculateNorth(incl1, incl2, azm1, azm2, deltaMD, rf, initialCoordinates.north);
+  const east = calculateEast(incl1, incl2, azm1, azm2, deltaMD, rf, initialCoordinates.east);
+  const tvd = calculateTVD(incl1, incl2, deltaMD, rf, initialCoordinates.tvd);
 
   if (isNaN(north) || isNaN(east) || isNaN(tvd)) {
     console.error('Coordinate calculation resulted in NaN', { north, east, tvd, point1, point2, initialCoordinates });
@@ -63,12 +71,15 @@ function calculateCoordinates(point1, point2, initialCoordinates) {
   return { north, east, tvd };
 }
 
-const initialCoordinates = { north: 0, east: 0, tvd: 0 };
-const coordinates = [initialCoordinates];
-for (let i = 1; i < surveyPoints.length; i++) {
-  const newCoordinates = calculateCoordinates(surveyPoints[i - 1], surveyPoints[i], coordinates[i - 1]);
-  coordinates.push(newCoordinates);
+function computeSurveyCoordinates(surveyPoints) {
+  const initialCoordinates = { north: 0, east: 0, tvd: 0 };
+  const coordinates = [initialCoordinates];
+  for (let i = 1; i < surveyPoints.length; i++) {
+    const newCoordinates = calculateCoordinates(surveyPoints[i - 1], surveyPoints[i], coordinates[i - 1]);
+    coordinates.push(newCoordinates);
+  }
+  console.log(coordinates);
+  return coordinates;
 }
-console.log(coordinates);
 
-export { coordinates }; // Export coordinates for use in main.js
+export { computeSurveyCoordinates }; // Export coordinates for use in main.js

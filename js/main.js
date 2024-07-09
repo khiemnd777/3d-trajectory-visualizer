@@ -1,12 +1,13 @@
-// js/main.js
-
 import * as THREE from 'three';
-import { coordinates } from './calculations.js';
+import { surveyPoints } from './survey-points.js';
+import { computeSurveyCoordinates } from './calculations.js';
 import { initThreeJS, createLine, createMarker, createCompass, createGroundPlane, fitCameraToObject } from './threejs-setup.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const { scene, camera, renderer, controls, labelRenderer } = initThreeJS();
   console.log('Scene, camera, renderer, controls, and labelRenderer initialized');
+
+  const coordinates = computeSurveyCoordinates(surveyPoints);
 
   const line = createLine(coordinates);
   scene.add(line);
