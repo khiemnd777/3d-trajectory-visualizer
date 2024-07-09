@@ -9,7 +9,7 @@ This project demonstrates a 3D visualization of wellbore trajectories using Thre
 - **Labels and Markers**: Display labels and markers at specific points along the wellbore path using `CSS2DRenderer`.
 - **Axes and Ground Plane**: Include axes for orientation and a ground plane for better spatial understanding.
 
-![image](https://github.com/khiemnd777/3d-trajectory-visualizer/assets/488071/27dbd380-bb7a-4b68-851c-b1dece663cbb)
+![image](https://github.com/khiemnd777/3d-trajectory-visualizer/assets/488071/b5f18561-b5b8-4ebf-b6cf-0fd82fcfab99)
 
 ## Installation
 
